@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+export METHOD_STATUS_FILE="$XDG_RUNTIME_DIR/scrllmeth.status"
+
+EDGE() {
+    printf "edge" >"$METHOD_STATUS_FILE"
+    notify-send -u normal "EDGE"
+    hyprctl keyword '$METHOD' edge -r
+}
+
+TWOFG() {
+    printf "2fg" >"$METHOD_STATUS_FILE"
+    notify-send -u normal "2FG"
+		hyprctl keyword '$METHOD' 2fg -r
+}
+
+if ! [ -f "$METHOD_STATUS_FILE" ]; then
+	TWOFG
+else
+  if [ $(cat "$METHOD_STATUS_FILE") = "2fg" ]; then
+		EDGE
+  elif [ $(cat "$METHOD_STATUS_FILE") = "edge" ]; then
+    TWOFG
+  fi
+fi
