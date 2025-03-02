@@ -1,0 +1,5 @@
+#!/bin/bash
+
+bluetoothctl power on
+bluetoothctl connect 48:D8:45:F6:59:8C
+pactl set-default-sink bluez_output.48_D8_45_F9_59:8C.1

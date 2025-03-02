@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+export SCROLL_STATUS_FILE="$XDG_RUNTIME_DIR/scroll_sensi.status"
+
+SENSI_UP() {
+    printf "20" >"$SCROLL_STATUS_FILE"
+    notify-send -u normal "SENSI UP"
+    hyprctl keyword '$TOUCHPAD_SCROLL_SENSI' "20" -r
+}
+
+SENSI_DOWN() {
+    printf "0.4" >"$SCROLL_STATUS_FILE"
+    notify-send -u normal "SENSI_DOWN"
+    hyprctl keyword '$TOUCHPAD_SCROLL_SENSI' "0.4" -r
+}
+
+if ! [ -f "$SCROLL_STATUS_FILE" ]; then
+	SENSI_DOWN
+else
+  if [ $(cat "$SCROLL_STATUS_FILE") = "0.4" ]; then
+    SENSI_UP
+  elif [ $(cat "$SCROLL_STATUS_FILE") = "20" ]; then
+    SENSI_DOWN
+  fi
+fi

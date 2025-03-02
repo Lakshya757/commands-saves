@@ -1,0 +1,37 @@
+#! /bin/sh
+
+
+scrDir=".local/share/bin"
+source "${scrDir}/globalcontrol.sh"
+roconf="${confDir}/rofi/styles/style_${rofiStyle}.rasi"
+
+[[ "${rofiScale}" =~ ^[0-9]+$ ]] || rofiScale=10
+
+if [ ! -f "${roconf}" ] ; then
+    roconf="$(find "${confDir}/rofi/styles" -type f -name "style_*.rasi" | sort -t '_' -k 2 -n | head -1)"
+fi
+
+
+
+wind_border=$(( hypr_border * 3 ))
+[ "${hypr_border}" -eq 0 ] && elem_border="10" || elem_border=$(( hypr_border * 2 ))
+r_override="window {border: ${hypr_width}px; border-radius: ${wind_border}px;} element {border-radius: ${elem_border}px;}"
+r_scale="configuration {font: \"JetBrainsMono Nerd Font ${rofiScale}\";}"
+i_override="$(gsettings get org.gnome.desktop.interface icon-theme | sed "s/'//g")"
+i_override="configuration {icon-theme: \"${i_override}\";}"
+
+
+
+
+
+
+
+CHOSEN=$(printf "PC Screen Only\nExtend\nSecond Screen Only" | rofi -dmenu -i -theme-str "${r_scale}" -theme-str "${r_override}" -theme-str "${i_override}" -config "${roconf}")
+
+case "$CHOSEN" in
+	"PC Screen Only")hyprctl reload && hyprctl keyword  '$EXT_MONITOR_ENABLED' disable -r ;;
+	"Extend") hyprctl reload ;;
+	"Second Screen Only")hyprctl reload && hyprctl keyword '$SCREEN_ENABLED' disable -r ;;
+
+	*) exit 1;;
+esac
